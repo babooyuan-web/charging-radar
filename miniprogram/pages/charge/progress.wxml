@@ -1,0 +1,110 @@
+<!-- pages/charge/progress.wxml -->
+<view class="page {{status}}">
+  <!-- 充电中 -->
+  <block wx:if="{{status == 'charging'}}">
+    <view class="progress-header">
+      <view class="connection-status {{wsConnected ? 'connected' : 'disconnected'}}">
+        <text class="status-dot"></text>
+        <text>{{wsConnected ? '实时连接' : '轮询模式'}}</text>
+      </view>
+      <text class="status-text">正在充电中</text>
+    </view>
+
+    <!-- 进度环 -->
+    <view class="progress-ring-container">
+      <view class="progress-ring">
+        <view class="progress-ring-bg"></view>
+        <view class="progress-ring-fill" style="--progress: {{progressPercent}}%"></view>
+        <view class="progress-center">
+          <text class="progress-percent">{{progressPercent}}%</text>
+          <text class="progress-label">已充电量</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 实时数据 -->
+    <view class="realtime-data">
+      <view class="data-item">
+        <text class="data-value">{{chargingData.power}}</text>
+        <text class="data-label">功率 (W)</text>
+      </view>
+      <view class="data-item">
+        <text class="data-value">{{chargingData.energy}}</text>
+        <text class="data-label">电量 (kWh)</text>
+      </view>
+      <view class="data-item">
+        <text class="data-value">{{chargingData.timeLeft}}</text>
+        <text class="data-label">剩余 (min)</text>
+      </view>
+      <view class="data-item">
+        <text class="data-value">¥{{chargingData.cost}}</text>
+        <text class="data-label">花费</text>
+      </view>
+    </view>
+
+    <!-- 功率趋势图（简化） -->
+    <view class="chart-container">
+      <view class="chart-title">功率趋势</view>
+      <view class="chart-bar-group">
+        <view class="chart-bar" wx:for="{{chartBars}}" wx:key="index" style="height: {{item}}%"></view>
+      </view>
+    </view>
+
+    <!-- 安全提示 -->
+    <view class="safety-tips">
+      <text class="tip-title">安全提示</text>
+      <text class="tip-item">• 请勿在充电区域吸烟或使用明火</text>
+      <text class="tip-item">• 充满后请及时拔枪</text>
+      <text class="tip-item">• 发现异常请立即停止充电</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <view class="action-btn extend" bindtap="extendCharge">⏱️ 延长充电</view>
+      <view class="action-btn stop" bindtap="stopCharge">⏹️ 停止充电</view>
+    </view>
+  </block>
+
+  <!-- 充电完成 -->
+  <block wx:if="{{status == 'completed'}}">
+    <view class="complete-container">
+      <view class="complete-icon">✅</view>
+      <text class="complete-title">充电完成</text>
+      <text class="complete-subtitle">已为您节省宝贵时间</text>
+      
+      <view class="complete-stats">
+        <view class="stat-item">
+          <text class="stat-value">{{order.powerUsed || 0}}</text>
+          <text class="stat-label">kWh</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{order.durationMinutes || 0}}</text>
+          <text class="stat-label">分钟</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">¥{{order.totalCost || 0}}</text>
+          <text class="stat-label">费用</text>
+        </view>
+      </view>
+
+      <view class="complete-actions">
+        <view class="action-btn primary" bindtap="goOrder">查看订单</view>
+        <view class="action-btn" bindtap="goHome">返回首页</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 故障 -->
+  <block wx:if="{{status == 'fault'}}">
+    <view class="fault-container">
+      <view class="fault-icon">⚠️</view>
+      <text class="fault-title">检测到异常</text>
+      <text class="fault-message">充电过程中检测到异常，已自动停止</text>
+      
+      <view class="fault-actions">
+        <view class="action-btn" bindtap="reportFault">📢 上报故障</view>
+        <view class="action-btn primary" bindtap="goHome">返回首页</view>
+      </view>
+    </view>
+  </block>
+</view>

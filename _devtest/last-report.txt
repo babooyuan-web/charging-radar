@@ -1,0 +1,84 @@
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] API 返回站点数: 7
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] API 返回站点数: 7
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] API 返回站点数: 7
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] API 返回站点数: 7
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] API 返回站点数: 9
+[雷达扫描] 参数: { latitude: 22.5329, longitude: 113.9366 }
+[雷达扫描] API 返回站点数: 9
+充电桩雷达小程序 - 页面逻辑集成测试
+后端: http://localhost:3000/api/v1
+
+### 1. 首页雷达页 pages/index
+  PASS  API 直连成功（未进离线兜底）
+  PASS  默认 2km 半径扫到 7 个桩
+  PASS  totalNearby 与列表一致
+  PASS  markers 已生成
+  PASS  freeNearby 计算正确
+  PASS  品牌筛选「驴充充」命中 3 个且全部匹配
+  PASS  品牌筛选「猛犸」命中 2 个且全部匹配
+  PASS  品牌筛选「小兔」命中 1 个且全部匹配
+  PASS  品牌筛选「云智充」命中 1 个且全部匹配
+  PASS  重置筛选后恢复全量
+  PASS  状态=有空闲 过滤正确
+  PASS  重新扫描后品牌筛选仍保留
+  PASS  onShow 30 秒内重复触发被节流
+  PASS  主动重新扫描不受节流限制
+  PASS  连发 3 次只保留最后一次结果（竞态防护）
+  PASS  切到 5km 后命中 9 个
+  PASS  按价格排序生效
+
+### 2. 登录页 pages/login
+  PASS  已移除废弃的 canIUseGetUserProfile
+  PASS  已移除废弃的 getUserProfile 调用
+  PASS  存在 chooseAvatar 回调
+  PASS  存在 nickname 输入回调
+  PASS  登录成功写入 token
+  PASS  登录成功写入 userInfo
+  PASS  登录后 switchTab 回首页
+  PASS  存在可下单的空闲站点
+  PASS  下单成功（未被空闲端口校验拦截）
+
+### 3. 订单列表页 pages/order/index
+  PASS  第 1 页返回 2 条
+  PASS  total 反映全量（>=3）
+  PASS  hasMore = 已加载 < total
+  PASS  loadMore 是「追加」不是「覆盖」
+  PASS  首页数据仍保留在列表中
+  PASS  tab=充电中 只返回 charging
+  PASS  tab=充电中 时 page 已重置为 1
+  PASS  tab=已完成 只返回 completed
+  PASS  tab=已完成 有数据
+  PASS  两个 tab 结果不同（修复前完全相同）
+  PASS  tab=全部 数量 >= 前两者
+  PASS  onShow 重置到第 1 页且不残留旧分页数据
+
+### 4. 充电进度页 pages/charge/progress
+  PASS  订单详情加载成功
+  PASS  WS 不可用时降级到轮询
+  PASS  progressPercent 按秒计算正确
+  PASS  剩余时间单位是分钟
+  PASS  剩余时间不会出现「60分钟充了30秒就归零」
+  PASS  查看订单用 switchTab 跳 tabBar 页
+  PASS  返回首页用 switchTab
+
+### 5. 电站详情页 / 扫码页
+  PASS  详情页加载成功
+  PASS  portList 已生成数组
+  PASS  starList 在 onLoad 已就绪
+  PASS  占用端口不能被选中
+  PASS  空闲端口可选中
+  PASS  二维码解码后与原始内容一致
+  PASS  扫码命中站点
+  PASS  含 ? & # 的二维码内容解码完整
+  PASS  未编码的裸参数也能正常处理
+
+================================
+  通过 54 项，失败 0 项
+================================

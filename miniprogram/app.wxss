@@ -1,0 +1,156 @@
+/* app.wxss - 全局样式 */
+page {
+  background: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+}
+
+view, text, button, input, textarea {
+  box-sizing: border-box;
+}
+
+/* 通用类 */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.text-primary {
+  color: #1677FF;
+}
+
+.text-success {
+  color: #52C41A;
+}
+
+.text-warning {
+  color: #FAAD14;
+}
+
+.text-danger {
+  color: #FF4D4F;
+}
+
+.text-gray {
+  color: #999;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: #1677FF;
+  color: #fff;
+  border-radius: 8rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.btn-primary[disabled] {
+  background: #ccc;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #1677FF;
+  border: 2rpx solid #1677FF;
+  border-radius: 8rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin: 20rpx;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.06);
+}
+
+/* 标签 */
+.tag {
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  font-size: 20rpx;
+  background: #E6F0FF;
+  color: #1677FF;
+  margin-right: 8rpx;
+}
+
+.tag-success {
+  background: #E6F7E6;
+  color: #52C41A;
+}
+
+.tag-warning {
+  background: #FFF7E6;
+  color: #FAAD14;
+}
+
+.tag-danger {
+  background: #FFF1F0;
+  color: #FF4D4F;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background: #f0f0f0;
+  margin: 20rpx 0;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 40rpx;
+  color: #999;
+}
+
+.empty-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+/* 雷达动画 */
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes radar-pulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* 充电进度动画 */
+@keyframes charge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

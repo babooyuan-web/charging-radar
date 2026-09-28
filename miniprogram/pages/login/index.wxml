@@ -1,0 +1,55 @@
+<!-- pages/login/index.wxml -->
+<view class="page">
+  <!-- 顶部品牌 -->
+  <view class="brand-section">
+    <view class="brand-icon">⚡</view>
+    <text class="brand-name">充电桩雷达</text>
+    <text class="brand-desc">一扫即知，全市充电桩实时状态</text>
+  </view>
+
+  <!-- 用户类型选择 -->
+  <view class="user-type-section">
+    <text class="section-title">请选择您的身份</text>
+    <view class="type-list">
+      <view class="type-item {{userType == 'rider' ? 'active' : ''}}" bindtap="selectUserType" data-type="rider">
+        <text class="type-icon">🏍️</text>
+        <text class="type-name">外卖骑手</text>
+        <text class="type-desc">充电快、网点多</text>
+      </view>
+      <view class="type-item {{userType == 'courier' ? 'active' : ''}}" bindtap="selectUserType" data-type="courier">
+        <text class="type-icon">📦</text>
+        <text class="type-name">快递员</text>
+        <text class="type-desc">路线顺路、不耽误派件</text>
+      </view>
+      <view class="type-item {{userType == 'normal' ? 'active' : ''}}" bindtap="selectUserType" data-type="normal">
+        <text class="type-icon">🚲</text>
+        <text class="type-name">普通用户</text>
+        <text class="type-desc">便宜可靠、小区附近</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 头像 + 昵称填写：微信官方替代已废弃的 wx.getUserProfile 的方案 -->
+  <view class="profile-section">
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" hover-class="none">
+      <image class="avatar" src="{{avatarUrl || '/static/icons/default-avatar.png'}}" mode="aspectFill" />
+      <text class="avatar-tip">点击设置头像</text>
+    </button>
+    <input class="nickname-input" type="nickname" placeholder="请输入昵称（可留空）" value="{{nickname}}" bindinput="onNicknameInput" />
+  </view>
+
+  <!-- 登录按钮 -->
+  <view class="login-actions">
+    <button class="login-btn primary" bindtap="doLogin" disabled="{{loading}}">
+      {{loading ? '登录中...' : '微信一键登录'}}
+    </button>
+  </view>
+
+  <!-- 协议 -->
+  <view class="agreement-section">
+    <text class="agreement-text">登录即同意</text>
+    <text class="agreement-link" bindtap="showAgreement">《用户协议》</text>
+    <text class="agreement-text">和</text>
+    <text class="agreement-link" bindtap="showPrivacy">《隐私政策》</text>
+  </view>
+</view>

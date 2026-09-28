@@ -1,0 +1,178 @@
+<!-- pages/index/index.wxml - 雷达首页 -->
+<view class="page">
+  <!-- 顶部搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text class="icon-search">🔍</text>
+      <input placeholder="搜索充电桩/小区/地址" value="{{searchValue}}" bindinput="onSearch" confirm-type="search" />
+    </view>
+    <view class="filter-btn" bindtap="openFilter">⚙️</view>
+  </view>
+
+  <!-- 离线演示模式提示 -->
+  <view class="offline-tip" wx:if="{{offlineMode}}">
+    <text class="offline-tip-icon">📴</text>
+    <text class="offline-tip-text">离线演示模式（未连接服务器，展示的是本地示例数据）</text>
+  </view>
+
+  <!-- 雷达扫描区 -->
+  <view class="radar-area">
+    <!-- 雷达动画 -->
+    <view class="radar-container" wx:if="{{scanning}}">
+      <view class="radar-circle radar-circle-1"></view>
+      <view class="radar-circle radar-circle-2"></view>
+      <view class="radar-circle radar-circle-3"></view>
+      <view class="radar-scan-line"></view>
+      <view class="radar-center">
+        <text class="radar-icon">📍</text>
+      </view>
+    </view>
+    
+    <!-- 扫描结果 -->
+    <view class="scan-result" wx:if="{{!scanning}}">
+      <text class="scan-result-num">{{totalNearby}}</text>
+      <text class="scan-result-label">个充电桩</text>
+    </view>
+    
+    <!-- 空闲提示 -->
+    <view class="free-hint" wx:if="{{!scanning}}">
+      <text class="free-hint-text">🟢 {{freeNearby}} 个空闲充电桩</text>
+    </view>
+    
+    <!-- 重新扫描按钮 -->
+    <view class="rescan-btn" bindtap="onRescan">
+      <text>🔄 重新扫描</text>
+    </view>
+  </view>
+
+  <!-- 范围切换 -->
+  <view class="radius-bar">
+    <view class="radius-item {{scanRadius == 500 ? 'active' : ''}}" bindtap="changeRadius" data-radius="500">500m</view>
+    <view class="radius-item {{scanRadius == 2000 ? 'active' : ''}}" bindtap="changeRadius" data-radius="2000">2km</view>
+    <view class="radius-item {{scanRadius == 5000 ? 'active' : ''}}" bindtap="changeRadius" data-radius="5000">5km</view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item {{sortBy == 'distance' ? 'active' : ''}}" bindtap="changeSort" data-sort="distance">综合</view>
+    <view class="filter-item {{sortBy == 'free' ? 'active' : ''}}" bindtap="changeSort" data-sort="free">最空闲</view>
+    <view class="filter-item {{sortBy == 'price' ? 'active' : ''}}" bindtap="changeSort" data-sort="price">最便宜</view>
+    <view class="filter-toggle" bindtap="toggleMap">
+      <text wx:if="{{showMap}}">📋 列表</text>
+      <text wx:else>🗺️ 地图</text>
+    </view>
+  </view>
+
+  <!-- 地图模式 -->
+  <view class="map-container" wx:if="{{showMap}}">
+    <map id="map"
+      latitude="{{latitude}}"
+      longitude="{{longitude}}"
+      markers="{{markers}}"
+      scale="14"
+      show-location
+      style="width: 100%; height: 400rpx;">
+    </map>
+  </view>
+
+  <!-- 列表模式 -->
+  <view class="station-list" wx:if="{{!showMap}}">
+    <view class="station-card" wx:for="{{filteredStations}}" wx:key="id" bindtap="onStationTap" data-id="{{item.id}}">
+      <view class="station-header">
+        <view class="station-brand">
+          <text class="brand-logo">{{item.brand == '驴充充' ? '🐴' : item.brand == '猛犸' ? '🐘' : item.brand == '小兔' ? '🐰' : item.brand == '云智充' ? '☁️' : '⚡'}}</text>
+          <text class="station-name">{{item.name}}</text>
+        </view>
+        <view class="station-distance">
+          <text class="distance-text">{{item.distance}}m</text>
+        </view>
+      </view>
+      
+      <view class="station-status">
+        <view class="port-status">
+          <view class="port-item {{item.freePorts > 0 ? 'free' : 'busy'}}">
+            <text class="port-num">{{item.freePorts}}</text>
+            <text class="port-label">空闲</text>
+          </view>
+          <view class="port-item occupied">
+            <text class="port-num">{{item.occupiedPorts}}</text>
+            <text class="port-label">占用</text>
+          </view>
+          <view class="port-item total">
+            <text class="port-num">{{item.totalPorts}}</text>
+            <text class="port-label">总数</text>
+          </view>
+        </view>
+        
+        <view class="price-tag">
+          <text class="price-value">¥{{item.pricePerHour}}</text>
+          <text class="price-unit">/时</text>
+        </view>
+      </view>
+      
+      <view class="station-tags" wx:if="{{item.tags}}">
+        <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="index">{{tag}}</text>
+      </view>
+      
+      <view class="station-actions">
+        <!-- 用 catchtap 阻断冒泡，否则点「导航」会同时触发卡片的 onStationTap 跳详情页 -->
+        <view class="action-btn navigate" catchtap="onNavigate" data-lat="{{item.lat}}" data-lng="{{item.lng}}" data-name="{{item.name}}">
+          <text>🧭 导航</text>
+        </view>
+        <view class="action-btn charge" bindtap="onStationTap" data-id="{{item.id}}">
+          <text>⚡ 充电</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty" wx:if="{{filteredStations.length === 0}}">
+      <text class="empty-icon">🔍</text>
+      <text class="empty-text">没有找到符合条件的充电桩</text>
+      <text class="empty-hint">试试扩大搜索范围或调整筛选条件</text>
+    </view>
+  </view>
+
+  <!-- 扫码充电按钮 -->
+  <view class="scan-fab" bindtap="onScanCharge">
+    <text class="fab-icon">📱</text>
+    <text class="fab-text">扫码充电</text>
+  </view>
+
+  <!-- 筛选弹窗 -->
+  <view class="filter-popup" wx:if="{{showFilter}}">
+    <view class="filter-mask" bindtap="closeFilter"></view>
+    <view class="filter-content">
+      <view class="filter-title">筛选条件</view>
+      
+      <!-- 品牌筛选 -->
+      <view class="filter-section">
+        <view class="filter-section-title">品牌</view>
+        <view class="filter-options">
+          <view class="filter-option {{filterBrand == item.id ? 'active' : ''}}" wx:for="{{brands}}" wx:key="id" bindtap="setFilterBrand" data-id="{{item.id}}">{{item.name}}</view>
+        </view>
+      </view>
+      
+      <!-- 状态筛选 -->
+      <view class="filter-section">
+        <view class="filter-section-title">状态</view>
+        <view class="filter-options">
+          <view class="filter-option {{filterStatus == item.id ? 'active' : ''}}" wx:for="{{statusOptions}}" wx:key="id" bindtap="setFilterStatus" data-id="{{item.id}}">{{item.name}}</view>
+        </view>
+      </view>
+      
+      <!-- 价格筛选 -->
+      <view class="filter-section">
+        <view class="filter-section-title">价格</view>
+        <view class="filter-options">
+          <view class="filter-option {{filterPrice == item.id ? 'active' : ''}}" wx:for="{{priceOptions}}" wx:key="id" bindtap="setFilterPrice" data-id="{{item.id}}">{{item.name}}</view>
+        </view>
+      </view>
+      
+      <view class="filter-actions">
+        <view class="filter-btn-reset" bindtap="resetFilter">重置</view>
+        <view class="filter-btn-apply" bindtap="applyFilter">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

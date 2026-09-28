@@ -1,0 +1,27 @@
+{
+  "name": "charging-radar-server",
+  "version": "1.0.0",
+  "description": "充电桩雷达小程序后端 API",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.0",
+    "mysql2": "^3.9.8",
+    "redis": "^4.6.7",
+    "jsonwebtoken": "^9.0.2",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express-validator": "^7.0.1",
+    "axios": "^1.12.0",
+    "ws": "^8.17.1",
+    "md5": "^2.3.0",
+    "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

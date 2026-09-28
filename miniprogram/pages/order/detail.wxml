@@ -1,0 +1,82 @@
+<!-- pages/order/detail.wxml -->
+<view class="page">
+  <!-- 订单状态 -->
+  <view class="status-section">
+    <view class="status-icon {{order.status}}">
+      <text wx:if="{{order.status == 'charging'}}" class="icon">⚡</text>
+      <text wx:elif="{{order.status == 'completed'}}" class="icon">✅</text>
+      <text wx:elif="{{order.status == 'pending'}}" class="icon">⏳</text>
+      <text wx:else class="icon">❌</text>
+    </view>
+    <text class="status-title">
+      {{order.status == 'charging' ? '充电中' : order.status == 'completed' ? '充电完成' : order.status == 'pending' ? '待启动' : '异常'}}
+    </text>
+    <text class="status-desc">订单号：{{order.orderNo}}</text>
+  </view>
+
+  <!-- 充电桩信息 -->
+  <view class="station-section" bindtap="viewStation">
+    <view class="station-info">
+      <text class="brand-badge">{{order.station.brand}}</text>
+      <text class="station-name">{{order.station.name}}</text>
+    </view>
+    <view class="station-address text-gray">{{order.station.address}}</view>
+  </view>
+
+  <!-- 充电数据 -->
+  <view class="data-section">
+    <view class="data-title">充电数据</view>
+    <view class="data-grid">
+      <view class="data-cell">
+        <text class="data-num">{{order.powerUsed}}</text>
+        <text class="data-label">充电量 (kWh)</text>
+      </view>
+      <view class="data-cell">
+        <text class="data-num">{{order.durationMinutes}}</text>
+        <text class="data-label">时长 (min)</text>
+      </view>
+      <view class="data-cell">
+        <text class="data-num">¥{{order.totalCost}}</text>
+        <text class="data-label">费用</text>
+      </view>
+      <view class="data-cell">
+        <text class="data-num">#{{order.portNo}}</text>
+        <text class="data-label">端口号</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时间信息 -->
+  <view class="time-section">
+    <view class="time-item">
+      <text class="time-label">开始时间</text>
+      <text class="time-value">{{order.startTime}}</text>
+    </view>
+    <view class="time-item">
+      <text class="time-label">结束时间</text>
+      <text class="time-value">{{order.endTime || '进行中...'}}</text>
+    </view>
+    <view class="time-item">
+      <text class="time-label">创建时间</text>
+      <text class="time-value">{{order.createdAt}}</text>
+    </view>
+  </view>
+
+  <!-- 支付信息 -->
+  <view class="pay-section">
+    <view class="pay-row">
+      <text class="pay-label">支付方式</text>
+      <text class="pay-value">微信支付</text>
+    </view>
+    <view class="pay-row">
+      <text class="pay-label">支付状态</text>
+      <text class="pay-value text-success">{{order.paymentStatus == 'paid' ? '已支付' : '未支付'}}</text>
+    </view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="action-section">
+    <view class="action-btn primary" bindtap="goCharging">再次充电</view>
+    <view class="action-btn" bindtap="writeReview" wx:if="{{order.status == 'completed'}}">去评价</view>
+  </view>
+</view>

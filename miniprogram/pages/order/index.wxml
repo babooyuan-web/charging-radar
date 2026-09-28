@@ -1,0 +1,76 @@
+<!-- pages/order/index.wxml -->
+<view class="page">
+  <!-- 标签栏 -->
+  <view class="tabs">
+    <view class="tab {{activeTab == 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">全部</view>
+    <view class="tab {{activeTab == 'charging' ? 'active' : ''}}" bindtap="switchTab" data-tab="charging">充电中</view>
+    <view class="tab {{activeTab == 'completed' ? 'active' : ''}}" bindtap="switchTab" data-tab="completed">已完成</view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="order-list" wx:if="{{!loading}}">
+    <view class="order-card" wx:for="{{orders}}" wx:key="id" bindtap="viewDetail" data-id="{{item.id}}">
+      <view class="order-header">
+        <view class="order-station">
+          <text class="brand-logo">{{item.stationBrand == '驴充充' ? '🐴' : item.stationBrand == '猛犸' ? '🐘' : item.stationBrand == '小兔' ? '🐰' : item.stationBrand == '云智充' ? '☁️' : '⚡'}}</text>
+          <text class="station-name">{{item.stationName}}</text>
+        </view>
+        <view class="order-status {{item.status}}">
+          <text wx:if="{{item.status == 'charging'}}" class="status-text charging">充电中</text>
+          <text wx:elif="{{item.status == 'completed'}}" class="status-text completed">已完成</text>
+          <text wx:elif="{{item.status == 'pending'}}" class="status-text pending">待启动</text>
+          <text wx:elif="{{item.status == 'fault'}}" class="status-text fault">故障</text>
+          <text wx:else class="status-text">{{item.status}}</text>
+        </view>
+      </view>
+
+      <view class="order-info">
+        <view class="info-row">
+          <text class="info-label">订单号</text>
+          <text class="info-value">{{item.orderNo}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">端口</text>
+          <text class="info-value">#{{item.portNo}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">充电量</text>
+          <text class="info-value">{{item.powerUsed}} kWh</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">时长</text>
+          <text class="info-value">{{item.durationMinutes}} 分钟</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">费用</text>
+          <text class="info-value price">¥{{item.totalCost}}</text>
+        </view>
+      </view>
+
+      <view class="order-footer">
+        <text class="order-time">{{item.createdAt}}</text>
+        <view class="order-actions">
+          <view class="action-btn" wx:if="{{item.status == 'charging'}}" bindtap="viewDetail" data-id="{{item.id}}">查看详情</view>
+          <view class="action-btn primary" wx:if="{{item.status == 'completed'}}" bindtap="goCharging">再次充电</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && orders.length === 0}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无订单</text>
+    <text class="empty-hint">快去扫码充电吧</text>
+    <view class="btn-primary" bindtap="goCharging">去充电</view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore && orders.length > 0}}">
+    <text bindtap="loadMore">加载更多</text>
+  </view>
+
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

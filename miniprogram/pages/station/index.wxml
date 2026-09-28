@@ -1,0 +1,156 @@
+<!-- pages/station/index.wxml -->
+<view class="page" wx:if="{{!loading && station}}">
+  <!-- 头部信息 -->
+  <view class="station-header">
+    <view class="station-title-row">
+      <text class="brand-badge">{{station.brand}}</text>
+      <text class="station-name">{{station.name}}</text>
+    </view>
+    <view class="station-address">
+      <text class="icon">📍</text>
+      <text>{{station.address}}</text>
+    </view>
+  </view>
+
+  <!-- 实时状态卡片 -->
+  <view class="status-card">
+    <view class="status-title">实时状态</view>
+    <view class="port-grid">
+      <view class="port-item free">
+        <text class="port-num">{{station.freePorts}}</text>
+        <text class="port-label">空闲</text>
+      </view>
+      <view class="port-item occupied">
+        <text class="port-num">{{station.occupiedPorts}}</text>
+        <text class="port-label">占用</text>
+      </view>
+      <view class="port-item fault">
+        <text class="port-num">{{station.faultPorts}}</text>
+        <text class="port-label">故障</text>
+      </view>
+      <view class="port-item total">
+        <text class="port-num">{{station.totalPorts}}</text>
+        <text class="port-label">总数</text>
+      </view>
+    </view>
+    <view class="status-bar">
+      <view class="status-bar-fill" style="width: {{station.freePorts / station.totalPorts * 100}}%"></view>
+    </view>
+  </view>
+
+  <!-- 价格 -->
+  <view class="price-card">
+    <view class="price-main">
+      <text class="price-value">¥{{station.pricePerHour}}</text>
+      <text class="price-unit">/小时</text>
+    </view>
+    <view class="price-tags">
+      <text class="tag" wx:if="{{station.powerType == 'fast'}}">⚡ 快充</text>
+      <text class="tag" wx:if="{{station.tags}}" wx:for="{{station.tags}}" wx:key="index">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 标签页 -->
+  <view class="tabs">
+    <view class="tab {{activeTab == 'info' ? 'active' : ''}}" bindtap="switchTab" data-tab="info">详情</view>
+    <view class="tab {{activeTab == 'reviews' ? 'active' : ''}}" bindtap="switchTab" data-tab="reviews">评价</view>
+    <view class="tab {{activeTab == 'records' ? 'active' : ''}}" bindtap="switchTab" data-tab="records">记录</view>
+  </view>
+
+  <!-- 详情 -->
+  <view class="tab-content" wx:if="{{activeTab == 'info'}}">
+    <view class="info-row">
+      <text class="info-label">运营商</text>
+      <text class="info-value">{{station.operator || '未知'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">客服电话</text>
+      <text class="info-value">{{station.phone || '无'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">营业时间</text>
+      <text class="info-value">{{station.businessHours || '24小时'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">状态</text>
+      <text class="info-value {{station.status == 'online' ? 'text-success' : 'text-danger'}}">{{station.status == 'online' ? '在线' : '离线'}}</text>
+    </view>
+  </view>
+
+  <!-- 评价 -->
+  <view class="tab-content" wx:if="{{activeTab == 'reviews'}}">
+    <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+      <view class="review-header">
+        <text class="reviewer">{{item.nickname}}</text>
+        <view class="stars">
+          <!-- 用 > 代替 <，避免 WXML 属性里出现裸的 < 导致解析异常 -->
+          <text wx:for="{{starList}}" wx:for-item="star" wx:key="*this" class="star {{item.rating > star ? 'filled' : ''}}">★</text>
+        </view>
+      </view>
+      <view class="review-content">{{item.content}}</view>
+      <view class="review-time text-gray">{{item.time}}</view>
+    </view>
+  </view>
+
+  <!-- 充电记录 -->
+  <view class="tab-content" wx:if="{{activeTab == 'records'}}">
+    <view class="record-item" wx:for="{{chargeRecords}}" wx:key="time">
+      <view class="record-info">
+        <text class="record-time">{{item.time}}</text>
+        <text class="record-duration">充电 {{item.duration}} 分钟</text>
+      </view>
+      <text class="record-cost">¥{{item.cost}}</text>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bar-btn navigate" bindtap="navigate">
+      <text>🧭 导航</text>
+    </view>
+    <view class="bar-btn charge" bindtap="startCharge">
+      <text>⚡ 扫码充电</text>
+    </view>
+  </view>
+
+  <!-- 充电弹窗 -->
+  <view class="charge-popup" wx:if="{{showChargePopup}}">
+    <view class="popup-mask" bindtap="closeChargePopup"></view>
+    <view class="popup-content">
+      <view class="popup-title">选择充电端口</view>
+      
+      <!-- 端口选择 -->
+      <view class="port-select">
+        <view class="port-option {{selectedPort == item ? 'selected' : ''}} {{item > station.freePorts ? 'disabled' : ''}}" wx:for="{{portList}}" wx:key="*this" bindtap="selectPort" data-port="{{item}}">
+          <text>端口 {{item}}</text>
+        </view>
+      </view>
+
+      <!-- 充电模式 -->
+      <view class="charge-modes">
+        <view class="mode-btn {{chargeMode == 'by_time' ? 'active' : ''}}" bindtap="setChargeMode" data-mode="by_time">按时间</view>
+        <view class="mode-btn {{chargeMode == 'by_amount' ? 'active' : ''}}" bindtap="setChargeMode" data-mode="by_amount">按金额</view>
+        <view class="mode-btn {{chargeMode == 'full' ? 'active' : ''}}" bindtap="setChargeMode" data-mode="full">充满</view>
+      </view>
+
+      <!-- 时间/金额输入 -->
+      <view class="charge-input" wx:if="{{chargeMode == 'by_time'}}">
+        <slider value="{{chargeValue}}" bindchange="setChargeTime" min="10" max="480" block-size="20" activeColor="#1677FF" />
+        <text class="input-value">{{chargeValue}} 分钟</text>
+      </view>
+      <view class="charge-input" wx:if="{{chargeMode == 'by_amount'}}">
+        <slider value="{{chargeAmount}}" bindchange="setChargeAmount" min="1" max="20" block-size="20" activeColor="#1677FF" />
+        <text class="input-value">¥{{chargeAmount}}</text>
+      </view>
+
+      <view class="popup-actions">
+        <view class="popup-btn cancel" bindtap="closeChargePopup">取消</view>
+        <view class="popup-btn confirm {{!canStartCharge ? 'disabled' : ''}}" bindtap="confirmCharge">确认充电</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="loading" wx:if="{{loading}}">
+  <text>加载中...</text>
+</view>

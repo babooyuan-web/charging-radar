@@ -1,0 +1,64 @@
+/* pages/charge/progress.wxss */
+.page { min-height: 100vh; padding: 20rpx; padding-bottom: 160rpx; }
+.page.charging { background: linear-gradient(180deg, #E6F0FF 0%, #f5f5f5 30%); }
+.page.completed { background: linear-gradient(180deg, #E6F7E6 0%, #f5f5f5 30%); }
+.page.fault { background: linear-gradient(180deg, #FFF1F0 0%, #f5f5f5 30%); }
+
+/* 充电中头部 */
+.progress-header { display: flex; flex-direction: column; align-items: center; padding: 40rpx 0; }
+.connection-status { display: flex; align-items: center; gap: 8rpx; font-size: 24rpx; color: #999; margin-bottom: 16rpx; }
+.connection-status.connected { color: #52C41A; }
+.status-dot { width: 12rpx; height: 12rpx; border-radius: 50%; background: #ccc; }
+.connection-status.connected .status-dot { background: #52C41A; }
+.status-text { font-size: 36rpx; font-weight: bold; color: #1677FF; }
+
+/* 进度环 */
+.progress-ring-container { display: flex; justify-content: center; padding: 60rpx 0; }
+.progress-ring { position: relative; width: 300rpx; height: 300rpx; }
+.progress-ring-bg { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 16rpx solid #E6F0FF; }
+.progress-ring-fill { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 16rpx solid #1677FF; border-bottom-color: transparent; border-left-color: transparent; transform: rotate(-45deg); clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%); animation: charge-pulse 2s infinite; }
+.progress-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.progress-percent { font-size: 56rpx; font-weight: bold; color: #1677FF; }
+.progress-label { font-size: 24rpx; color: #999; }
+
+/* 实时数据 */
+.realtime-data { display: flex; background: #fff; border-radius: 16rpx; padding: 24rpx; margin: 20rpx 0; box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06); }
+.data-item { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.data-value { font-size: 36rpx; font-weight: bold; color: #1677FF; }
+.data-label { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+
+/* 图表 */
+.chart-container { background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 20rpx; }
+.chart-title { font-size: 28rpx; font-weight: bold; margin-bottom: 16rpx; }
+.chart-bar-group { display: flex; align-items: flex-end; height: 150rpx; gap: 4rpx; }
+.chart-bar { flex: 1; background: linear-gradient(to top, #1677FF, #69B1FF); border-radius: 4rpx 4rpx 0 0; }
+
+/* 安全提示 */
+.safety-tips { background: #FFF7E6; border-radius: 12rpx; padding: 20rpx; margin-bottom: 20rpx; }
+.tip-title { font-size: 26rpx; font-weight: bold; color: #FAAD14; margin-bottom: 8rpx; }
+.tip-item { display: block; font-size: 24rpx; color: #D48806; margin-bottom: 4rpx; }
+
+/* 操作栏 */
+.action-bar { display: flex; gap: 20rpx; position: fixed; bottom: 0; left: 0; right: 0; padding: 20rpx; background: #fff; box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.06); }
+.action-btn { flex: 1; padding: 24rpx; text-align: center; border-radius: 8rpx; font-size: 28rpx; }
+.action-btn.extend { background: #E6F0FF; color: #1677FF; }
+.action-btn.stop { background: #FF4D4F; color: #fff; }
+.action-btn.primary { background: #1677FF; color: #fff; }
+
+/* 完成 */
+.complete-container { display: flex; flex-direction: column; align-items: center; padding: 80rpx 40rpx; }
+.complete-icon { font-size: 120rpx; margin-bottom: 20rpx; }
+.complete-title { font-size: 40rpx; font-weight: bold; color: #52C41A; margin-bottom: 8rpx; }
+.complete-subtitle { font-size: 26rpx; color: #999; margin-bottom: 40rpx; }
+.complete-stats { display: flex; gap: 40rpx; margin-bottom: 60rpx; }
+.stat-item { display: flex; flex-direction: column; align-items: center; }
+.stat-value { font-size: 40rpx; font-weight: bold; color: #333; }
+.stat-label { font-size: 24rpx; color: #999; }
+.complete-actions { display: flex; gap: 20rpx; width: 100%; }
+
+/* 故障 */
+.fault-container { display: flex; flex-direction: column; align-items: center; padding: 80rpx 40rpx; }
+.fault-icon { font-size: 120rpx; margin-bottom: 20rpx; }
+.fault-title { font-size: 40rpx; font-weight: bold; color: #FF4D4F; margin-bottom: 8rpx; }
+.fault-message { font-size: 26rpx; color: #999; margin-bottom: 40rpx; }
+.fault-actions { display: flex; gap: 20rpx; width: 100%; }

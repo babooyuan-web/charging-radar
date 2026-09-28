@@ -1,0 +1,67 @@
+<!-- pages/scan/index.wxml -->
+<view class="page">
+  <!-- 扫码区 -->
+  <view class="scan-section" wx:if="{{!station && !loading}}">
+    <view class="scan-icon">📱</view>
+    <text class="scan-title">扫描充电桩上的二维码</text>
+    <text class="scan-desc">对准充电桩上的二维码即可开始充电</text>
+    <view class="btn-primary" bindtap="scanQR">立即扫码</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>识别中...</text>
+  </view>
+
+  <!-- 桩信息 -->
+  <view class="station-info" wx:if="{{station && !loading}}">
+    <view class="info-header">
+      <text class="brand-badge">{{station.brand}}</text>
+      <text class="name">{{station.name}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">空闲端口</text>
+      <text class="value text-success">{{station.freePorts}} / {{station.totalPorts}}</text>
+    </view>
+    <view class="info-row">
+      <text class="label">价格</text>
+      <text class="value">¥{{station.pricePerHour}}/小时</text>
+    </view>
+    <view class="info-row">
+      <text class="label">地址</text>
+      <text class="value">{{station.address}}</text>
+    </view>
+  </view>
+
+  <!-- 选择端口 -->
+  <view class="port-section" wx:if="{{station && !loading}}">
+    <text class="section-title">选择充电端口</text>
+    <view class="port-list">
+      <!-- 用 >= 代替 <=，避免 WXML 属性里出现裸的 < 导致解析异常 -->
+      <view class="port-item {{selectedPort == item ? 'selected' : ''}} {{station.freePorts >= item ? 'available' : 'occupied'}}" 
+            wx:for="{{portList}}" wx:key="*this" 
+            bindtap="selectPort" data-port="{{item}}">
+        <text class="port-num">{{item}}</text>
+        <text class="port-status">{{station.freePorts >= item ? '空闲' : '占用'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 充电模式 -->
+  <view class="mode-section" wx:if="{{selectedPort && station}}">
+    <text class="section-title">充电模式</text>
+    <view class="mode-list">
+      <view class="mode-item {{chargeMode == 'by_time' ? 'active' : ''}}" bindtap="setMode" data-mode="by_time">按时间</view>
+      <view class="mode-item {{chargeMode == 'full' ? 'active' : ''}}" bindtap="setMode" data-mode="full">充满</view>
+    </view>
+    <view class="time-slider" wx:if="{{chargeMode == 'by_time'}}">
+      <slider value="{{chargeValue}}" bindchange="setTime" min="10" max="480" block-size="20" activeColor="#1677FF" />
+      <text class="slider-value">{{chargeValue}} 分钟</text>
+    </view>
+  </view>
+
+  <!-- 启动按钮 -->
+  <view class="start-section" wx:if="{{station && !loading}}">
+    <view class="btn-primary {{!canStartCharge ? 'disabled' : ''}}" bindtap="startCharge">立即充电</view>
+  </view>
+</view>
